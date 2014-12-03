@@ -8,25 +8,25 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 	// assign automatic id to new client
-	io.sockets['nickname'] = socket.id;
-	io.emit('MSG', '>> New user ' + io.sockets['nickname']) + ' connected.';
+	io.emit('MSG', '>> New user ' + socket.id + ' connected.';
 
 	// clients disconnects
   	socket.on('disconnect', function(){
-		io.emit('MSG', '>> User ' + io.sockets['nickname'] + ' disconnected.');
-		// TODO: remove from database
+		io.emit('MSG', '>> User ' + socket.id + ' disconnected.');
+		// TODO: remove from database?
   	});
 
   	// process commands and messages
   	socket.on('MSG', function(msg){
   		if (msg.substr(0, 5) == "/nick") {
-  			io.sockets['nickname'] = msg.substr(6);
-  			io.emit('MSG', 'Nickname set to: ' + io.sockets['nickname']);
+  			//io.sockets['nickname'] = msg.substr(6);
+  			socket.id = msg.substr(6);
+  			io.emit('MSG', 'Nickname set to: ' + socket.id);
   		} else if (msg.substr(0, 6) == "/users") {
 
   		} else {
   			// emit message to all connected browsers
-    		io.emit('MSG', msg);
+    		io.emit('MSG', socket.id + ': ' + msg);
     	}
   	});
 });

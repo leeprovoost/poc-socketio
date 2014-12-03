@@ -4,7 +4,12 @@ Playground to test socket.io. Mainly following the tutorial on http://socket.io/
 
 ## Use
 
-```node index.js```
+Start server: `node index.js`
+
+Chat commands:
+* /nick [username], e.g. /nick lee: Change username
+* /users: show list of all online users
+* [message], e.g. hello!: Broadcast message
 
 ## Useful links
 

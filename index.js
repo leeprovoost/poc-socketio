@@ -13,32 +13,34 @@ io.on('connection', function(socket){
 	// new user has joined
 	userCount++;
 	clients.push(socket); 
-	socket.emit('receiveMessage', ">> Welcome, there are " + userCount + " users in the chat.")
-	socket.broadcast.emit('receiveMessage', '== New user ' + socket.id + ' connected.');
+	socket.emit('receiveMessage', "PRIVATE: Welcome, there are " + userCount + " users in the chat.");
+	// temp initialise username with id
+	socket.username = socket.id;
+	socket.broadcast.emit('receiveMessage', 'BROADCAST: New user ' + socket.username + ' connected.');
 
 	// clients disconnects
   	socket.on('disconnect', function(){
   		userCount--;
   		clients.splice(clients.indexOf(socket), 1);
-		io.emit('receiveMessage', '== User ' + socket.id + ' disconnected.');
+		io.emit('receiveMessage', 'BROADCAST: User ' + socket.username + ' disconnected.');
   	});
 
   	// process commands and messages
   	socket.on('sendMessage', function(msg){
   		if (msg.substr(0, 5) == "/nick") {
   			// TODO probably better to retain the socket.id and maintain a separate database for nicks
-  			var old_nick = socket.id;
-  			socket.id = msg.substr(6);
-  			socket.emit('receiveMessage', ">> Hey " + socket.id + ", we've changed your nickname.");
-  			socket.broadcast.emit('receiveMessage', "== " + old_nick + " has changed nickname to " + socket.id);
+  			var old_nick = socket.username;
+  			socket.username = msg.substr(6);
+  			socket.emit('receiveMessage', "PRIVATE: Hey " + socket.username + ", we've changed your nickname.");
+  			socket.broadcast.emit('receiveMessage', "BROADCAST " + old_nick + " has changed nickname to " + socket.username);
   		} else if (msg.substr(0, 6) == "/users") {
-  			socket.emit('receiveMessage', ">> List of users connected to this channel");
+  			socket.emit('receiveMessage', "BROADCAST: List of users connected to this channel");
 	        clients.forEach(function(client, index) {
-	        	socket.emit('receiveMessage', ">> " + (index+1) + ") " + client.id);
+	        	socket.emit('receiveMessage', "BROADCAST: " + (index+1) + ") " + client.username);
 	        });
   		} else {
   			// emit message to all connected browsers
-    		socket.broadcast.emit('receiveMessage', socket.id + ': ' + msg);
+    		socket.broadcast.emit('receiveMessage', socket.username + ': ' + msg);
     	}
   	});
 });

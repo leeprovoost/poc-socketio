@@ -31,7 +31,7 @@ io.on('connection', function(socket){
   			// TODO probably better to retain the socket.id and maintain a separate database for nicks
   			var old_nick = socket.username;
   			socket.username = msg.substr(6);
-  			socket.emit('receiveMessage', "PRIVATE: Hey " + socket.username + ", we've changed your nickname.");
+  			socket.emit('receiveMessage', "PRIVATE: Hey " + old_nick + ", we've changed your nickname to: " + socket.username);
   			socket.broadcast.emit('receiveMessage', "BROADCAST " + old_nick + " has changed nickname to " + socket.username);
   		} else if (msg.substr(0, 6) == "/users") {
   			socket.emit('receiveMessage', "BROADCAST: List of users connected to this channel");

@@ -8,20 +8,21 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 	// assign automatic id to new client
-	io.emit('MSG', '>> New user ' + socket.id + ' connected.';
+	io.emit('MSG', '>> New user ' + socket.id + ' connected.');
 
 	// clients disconnects
   	socket.on('disconnect', function(){
 		io.emit('MSG', '>> User ' + socket.id + ' disconnected.');
-		// TODO: remove from database?
   	});
 
   	// process commands and messages
   	socket.on('MSG', function(msg){
   		if (msg.substr(0, 5) == "/nick") {
-  			//io.sockets['nickname'] = msg.substr(6);
+  			// TODO probably better to retain the socket.id and maintain a separate database for nicks
+  			var old_nick = socket.id;
   			socket.id = msg.substr(6);
-  			io.emit('MSG', 'Nickname set to: ' + socket.id);
+  			socket.emit('MSG', ">> Hey " + socket.id + ", we've changed your nickname.");
+  			io.emit('MSG', old_nick + " has changed nickname to " + socket.id);
   		} else if (msg.substr(0, 6) == "/users") {
 
   		} else {

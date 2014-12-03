@@ -3,7 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.get('/', function(req, res){
-  	res.sendfile('index.html');
+  	res.sendfile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){
@@ -12,9 +12,17 @@ io.on('connection', function(socket){
   	socket.on('disconnect', function(){
 		io.emit('MSG', 'user disconnected');
   	});
-  	
+
   	socket.on('MSG', function(msg){
-    	io.emit('MSG', msg);
+  		// parse perosnal commands (/nick = 5 chars)
+  		if (msg.substr(0, 5) == "/nick") {
+  			io.emit('MSG', 'detected nickname');
+  			var nickname = msg.substr(6);
+  			io.emit('MSG', 'Nickname set to: ' + nickname);
+  		} else {
+  			// emit message to all connected browsers
+    		io.emit('MSG', msg);
+    	}
   	});
 });
 

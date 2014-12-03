@@ -34,9 +34,9 @@ io.on('connection', function(socket){
   			socket.emit('receiveMessage', "PRIVATE: Hey " + old_nick + ", we've changed your nickname to: " + socket.username);
   			socket.broadcast.emit('receiveMessage', "BROADCAST " + old_nick + " has changed nickname to " + socket.username);
   		} else if (msg.substr(0, 6) == "/users") {
-  			socket.emit('receiveMessage', "BROADCAST: List of users connected to this channel");
+  			socket.emit('receiveMessage', "PRIVATE: List of users connected to this channel");
 	        clients.forEach(function(client, index) {
-	        	socket.emit('receiveMessage', "BROADCAST: " + (index+1) + ") " + client.username);
+	        	socket.emit('receiveMessage', "PRIVATE: " + (index+1) + ") " + client.username);
 	        });
   		} else {
   			// emit message to all connected browsers

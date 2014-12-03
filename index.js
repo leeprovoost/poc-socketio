@@ -7,18 +7,23 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-	io.emit('MSG', 'new user connected');
+	// assign automatic id to new client
+	io.sockets['nickname'] = socket.id;
+	io.emit('MSG', '>> New user ' + io.sockets['nickname']) + ' connected.';
 
+	// clients disconnects
   	socket.on('disconnect', function(){
-		io.emit('MSG', 'user disconnected');
+		io.emit('MSG', '>> User ' + io.sockets['nickname'] + ' disconnected.');
+		// TODO: remove from database
   	});
 
+  	// process commands and messages
   	socket.on('MSG', function(msg){
-  		// parse perosnal commands (/nick = 5 chars)
   		if (msg.substr(0, 5) == "/nick") {
-  			io.emit('MSG', 'detected nickname');
-  			var nickname = msg.substr(6);
-  			io.emit('MSG', 'Nickname set to: ' + nickname);
+  			io.sockets['nickname'] = msg.substr(6);
+  			io.emit('MSG', 'Nickname set to: ' + io.sockets['nickname']);
+  		} else if (msg.substr(0, 6) == "/users") {
+
   		} else {
   			// emit message to all connected browsers
     		io.emit('MSG', msg);

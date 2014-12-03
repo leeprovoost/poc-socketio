@@ -23,11 +23,11 @@
     <script>
       var socket = io();
       $('form').submit(function(){
-        socket.emit('MSG', $('#m').val());
+        socket.emit('sendMessage', $('#m').val());
         $('#m').val('');
         return false;
       });
-      socket.on('MSG', function(msg){
+      socket.on('receiveMessage', function(msg){
         $('#messages').append($('<li>').text(msg));
       });
     </script>
